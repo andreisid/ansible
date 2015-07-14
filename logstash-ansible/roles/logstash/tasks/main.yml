@@ -1,0 +1,67 @@
+---
+# tasks file for logstash
+
+- name: checking if JAVA is installed
+  command: java -version
+  ignore_errors: yes
+  register: java_check
+  changed_when: no
+
+- name: Install Java
+  yum: pkg="{{java}}" state=present
+  when: java_check !=0
+
+- name: Add Logstash repository.
+  copy:
+    src: logstash.repo
+    dest: /etc/yum.repos.d/logstash.repo
+    mode: 0644
+
+- name: installing logstash
+  yum:
+    pkg: "{{ logstash }}"
+    state: present
+
+- name: Ensure Logstash SSL key pair directory exists.
+  action: file path="{{ logstash_ssl_dir }}" state=directory
+
+- name: Copy SSL key and cert for logstash-forwarder.
+  copy:
+    src: "{{ item }}"
+    dest: "{{ logstash_ssl_dir }}/{{ item }}"
+    mode: 0644
+  with_items:
+    - "{{ logstash_ssl_key_file }}"
+    - "{{ logstash_ssl_certificate_file }}"
+  notify: restart logstash
+
+- name: Create Logstash configuration files.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 01-lumberjack-input.conf
+    - 30-lumberjack-output.conf
+  notify: restart logstash
+
+- name: Create Logstash filters.
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 10-lumberjack-filter.conf 
+  notify: restart logstash
+
+- name: setting logstash to autostart
+  service:
+    name: logstash
+    enabled: yes
+  notify:
+    - restart logstash
+

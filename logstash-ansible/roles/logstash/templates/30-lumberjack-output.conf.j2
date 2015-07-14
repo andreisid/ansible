@@ -1,0 +1,7 @@
+output {
+  elasticsearch { 
+       host => "{{ logstash_elasticsearch_host }}"
+       cluster => "{{ logstash_elasticsearch_cluster }}"
+       }
+  stdout { codec => json }
+}

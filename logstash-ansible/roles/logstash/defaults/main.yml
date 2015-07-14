@@ -1,0 +1,11 @@
+---
+# defaults file for logstash
+logstash_version: 1.5
+
+logstash_java_package: openjdk-7-jre-headless
+
+logstash_configuration_files: []
+
+logstash_configuration_templates: []
+
+logstash_default_options: {}

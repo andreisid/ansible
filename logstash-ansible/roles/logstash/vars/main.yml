@@ -1,0 +1,10 @@
+---
+# vars file for logstash
+
+java: sun-java-1.8.0_25-1.x86_64
+logstash: logstash-1.5.0.rc2-1.noarch
+logstash_ssl_dir: /etc/logstash/certs
+logstash_ssl_key_file: logstash.crt
+logstash_ssl_certificate_file: logstash.key
+logstash_elasticsearch_host: elasticsearch001.yourdomain 
+logstash_elasticsearch_cluster: elasticsearch
