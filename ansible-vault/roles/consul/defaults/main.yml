@@ -1,0 +1,13 @@
+---
+consul_vers: 0.6.4
+vault_vers: 0.5.2
+consul_datacenter: local
+consul_log_dir: /var/log/consul
+consul_data_dir: /tmp/consul
+consul_config_dir: /etc/consul.d
+consul_log_level: INFO
+consul_node_name: "{{ inventory_hostname }}"
+consul_server: True
+consul_ui: False
+consul_bootstrap_expect: 2
+

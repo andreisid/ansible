@@ -1,0 +1,61 @@
+---
+- block:
+    - name: Check if consul exists
+      stat: path=/usr/local/bin/consul
+      register: consul_state
+
+    - name: Download consul
+      get_url: url=https://releases.hashicorp.com/consul/{{ consul_vers }}/consul_{{ consul_vers }}_linux_amd64.zip dest=/tmp/consul.zip mode=0440
+      when: consul_state.stat.exists == False
+
+    - name: Install consul
+      unarchive: src=/tmp/consul.zip dest=/usr/local/bin copy=no
+      when: consul_state.stat.exists == False
+    
+    - name: Create logdir 
+      file: path={{ consul_log_dir }} state=directory mode=0755
+
+- block:
+    - name: bind address
+      set_fact:
+        consul_bind: "{{ ansible_eth0['ipv4']['address'] }}"
+        consul_leader: "{{ hostvars[play_hosts[0]]['ansible_fqdn'] }}"
+        consul_leader_ip: "{{ hostvars[play_hosts[0]]['ansible_eth0']['ipv4']['address'] }}"
+    - name: is leader
+      debug: msg="{{ inventory_hostname }} {{ hostvars[play_hosts[0]]['ansible_fqdn'] }}"
+      #set_fact:
+      #  consul_is_leader: 
+      when: inventory_hostname==consul_leader
+
+- block:
+    - name: config file
+      template:
+        src={{ item.src }}
+        dest={{ item.dst }}
+        owner=root
+        group=root
+        mode=0644
+      with_items:
+        - { src: consul.logrotate.j2, dst: /etc/logrotate.d/consul }
+        - { src: consul.json.j2, dst: /etc/consul.d/consul.json }
+    
+    - name: init script
+      template:
+        src={{ item.src }}
+        dest={{ item.dst }}
+        owner=root
+        group=root
+        mode=0755
+      #notify:
+      #  - consul restart
+      with_items:
+        - { src: consul.sysvinit.j2, dst: /etc/init.d/consul }
+    - name: start the leader
+      service: name=consul state=restarted
+      when: inventory_hostname==consul_leader
+    - name: start the rest
+      service: name=consul state=restarted
+      when: inventory_hostname!=consul_leader
+
+      
+

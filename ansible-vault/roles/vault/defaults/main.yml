@@ -1,0 +1,7 @@
+---
+vault_vers: 0.5.2
+vault_log_dir: /var/log/vault
+vault_config_dir: /etc/vault.d
+vault_log_level: INFO
+vault_node_name: "{{ inventory_hostname }}"
+

@@ -1,0 +1,9 @@
+--- # test playbook 
+- name: test playbook                             
+  hosts: servers                  
+  gather_facts: yes                                      
+  connection: ssh                                     
+  become: yes                                             
+  roles: 
+    - consul
+    - vault 

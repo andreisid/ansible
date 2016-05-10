@@ -1,0 +1,46 @@
+---
+- block:
+    - name: Check if vault exists
+      stat: path=/usr/local/bin/vault
+      register: vault_state
+
+    - name: Download vault
+      get_url: url=https://releases.hashicorp.com/vault/{{ vault_vers }}/vault_{{ vault_vers }}_linux_amd64.zip dest=/tmp/vault.zip mode=0440
+      when: vault_state.stat.exists == False
+
+    - name: Install vault
+      unarchive: src=/tmp/vault.zip dest=/usr/local/bin copy=no
+      when: vault_state.stat.exists == False
+    
+    - name: Create logdir 
+      file: path={{ vault_log_dir }} state=directory mode=0755
+
+- block:
+    - name: config file
+      template:
+        src={{ item.src }}
+        dest={{ item.dst }}
+        owner=root
+        group=root
+        mode=0644
+      with_items:
+        - { src: vault.logrotate.j2, dst: /etc/logrotate.d/vault }
+        - { src: vault.conf.j2, dst: /etc/vault.d/vault.conf }
+    
+    - name: init script
+      template:
+        src={{ item.src }}
+        dest={{ item.dst }}
+        owner=root
+        group=root
+        mode=0755
+      #notify:
+      #  - consul restart
+      with_items:
+        - { src: vault.sysvinit.j2, dst: /etc/init.d/vault }
+    - name: start vault
+      service: name=vault state=restarted
+      
+
+      
+

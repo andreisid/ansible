@@ -1,0 +1,10 @@
+---
+- name: vault start
+  service:
+    name=vault
+    state=started
+- name: vault restart
+  service:
+    name=vault
+    state=restarted
+
