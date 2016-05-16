@@ -1,9 +1,22 @@
---- # test playbook 
-- name: test playbook                             
-  hosts: servers                  
+--- # test playbook
+- name: consul playbook
+  hosts: consul  
+  gather_facts: yes
+  connection: ssh
+  become: yes
+  roles:
+    - consul
+ 
+- name: vault playbook                             
+  hosts: vault                  
   gather_facts: yes                                      
   connection: ssh                                     
-  become: yes                                             
+  become: yes                                         
+  vars:
+    vault_consul_advertise_addr: http://vault-lb.local:8200
+    vault_mysql_address: mysql.local
+    vault_mysql_user: vault
+    vault_mysql_pass: vault
+    vault_mysql_db: vault
   roles: 
-    - consul
     - vault 

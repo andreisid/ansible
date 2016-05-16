@@ -4,4 +4,8 @@ vault_log_dir: /var/log/vault
 vault_config_dir: /etc/vault.d
 vault_log_level: INFO
 vault_node_name: "{{ inventory_hostname }}"
-
+vault_mysql_address: "{{ vault_mysql_address }}"
+vault_mysql_user: "{{ vault_mysql_user }}"
+vault_mysql_pass: "{{ vault_mysql_pass }}"
+vault_mysql_db: "{{ vault_mysql_db }}"
+vault_consul_advertise_addr: "{{ vault_consul_advertise_addr }}"

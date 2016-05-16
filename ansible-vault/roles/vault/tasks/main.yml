@@ -15,6 +15,9 @@
     - name: Create logdir 
       file: path={{ vault_log_dir }} state=directory mode=0755
 
+    - name: Create confdir 
+      file: path={{ vault_config_dir }} state=directory mode=0755
+
 - block:
     - name: config file
       template:
@@ -25,7 +28,7 @@
         mode=0644
       with_items:
         - { src: vault.logrotate.j2, dst: /etc/logrotate.d/vault }
-        - { src: vault.conf.j2, dst: /etc/vault.d/vault.conf }
+        - { src: vault.conf.j2, dst: /etc/vault.d/vault.hcl }
     
     - name: init script
       template:

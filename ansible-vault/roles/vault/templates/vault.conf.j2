@@ -1,6 +1,14 @@
-backend "consul" {
+ha_backend "consul" {
   address = "127.0.0.1:8500"
+  advertise_addr = "{{ vault_consul_advertise_addr }}"
   path= "vault"
+}
+
+backend "mysql" {
+  address = "{{ vault_mysql_address }}:3306"
+  username = "{{ vault_mysql_user }}"
+  password = "{{ vault_mysql_pass }}"
+  database = "{{ vault_mysql_db }}"
 }
 
 listener "tcp" {

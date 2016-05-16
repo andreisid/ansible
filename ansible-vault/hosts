@@ -1,3 +1,8 @@
-[servers]
-vm1
-vm2
+[consul]
+gm11bas001
+gm11bas002
+gm11bas003
+
+[vault]
+gm11bas001
+gm11bas002

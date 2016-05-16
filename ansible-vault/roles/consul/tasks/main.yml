@@ -1,5 +1,8 @@
 ---
 - block:
+    - name: Install deps
+      yum: name=unzip state=present
+- block:
     - name: Check if consul exists
       stat: path=/usr/local/bin/consul
       register: consul_state
@@ -14,6 +17,9 @@
     
     - name: Create logdir 
       file: path={{ consul_log_dir }} state=directory mode=0755
+    
+    - name: Create confdir
+      file: path={{ consul_config_dir }} state=directory mode=0755
 
 - block:
     - name: bind address
